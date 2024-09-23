@@ -1,0 +1,15 @@
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\bin\Debug\net8.0\MemberCard.exe
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\bin\Debug\net8.0\MemberCard.deps.json
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\bin\Debug\net8.0\MemberCard.runtimeconfig.json
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\bin\Debug\net8.0\MemberCard.dll
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\bin\Debug\net8.0\MemberCard.pdb
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.AssemblyInfoInputs.cache
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.AssemblyInfo.cs
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.csproj.CoreCompileInputs.cache
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.sourcelink.json
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.dll
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\refint\MemberCard.dll
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.pdb
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\MemberCard.genruntimeconfig.cache
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_01\MemberCard\MemberCard\obj\Debug\net8.0\ref\MemberCard.dll
