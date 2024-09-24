@@ -1,0 +1,10 @@
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\bin\Debug\CustomerInfo.exe.config
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\bin\Debug\CustomerInfo.exe
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\bin\Debug\CustomerInfo.pdb
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.csproj.AssemblyReference.cache
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.Form1.resources
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.Properties.Resources.resources
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.csproj.GenerateResource.cache
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.csproj.CoreCompileInputs.cache
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.exe
+C:\Users\yyct\Desktop\c-sharp-ojt-tutorials\Tutorial_03\CustomerInfo\CustomerInfo\obj\Debug\CustomerInfo.pdb
