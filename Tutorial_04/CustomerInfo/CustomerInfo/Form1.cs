@@ -245,7 +245,7 @@ namespace CustomerInfo
                         cmd.Parameters.AddWithValue("@created_user_id", created_user_id);
                         cmd.Parameters.AddWithValue("@updated_user_id", updated_user_id);
                         cmd.Parameters.AddWithValue("@deleted_user_id", deleted_user_id);
-                        cmd.Parameters.AddWithValue("@photo", imagePath);
+                        cmd.Parameters.AddWithValue("@photo", string.IsNullOrEmpty(imagePath) ? (object)DBNull.Value : imagePath);
 
                         cmd.ExecuteNonQuery();
                     }
