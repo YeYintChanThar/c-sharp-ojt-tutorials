@@ -23,6 +23,7 @@ namespace CustomerInfo
         public Registeration_Form()
         {
             InitializeComponent();
+            CalculateAge();
         }
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
