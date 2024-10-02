@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ namespace CustomerInfo
     public partial class LoginForm : Form
     {
         private string connectionString = "Data Source=DESKTOP-GKTPEC8\\SQLEXPRESSTESTER;Initial Catalog=CustomerDb;Integrated Security=True;";
+
         public LoginForm()
         {
             InitializeComponent();
@@ -16,8 +18,8 @@ namespace CustomerInfo
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            string username = txtUserName.Text;
-            string password = txtPassword.Text;
+            string username = txtUserName.Text.Trim();
+            string password = txtPassword.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -25,28 +27,25 @@ namespace CustomerInfo
                 return;
             }
 
-
             string hashedPassword = HashPassword(password);
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = "SELECT id FROM Customers WHERE (customer_name = @username OR customer_id = @username) " +
-                     "AND password = @hashedPassword";
+                string query = "SELECT id FROM Customers WHERE (customer_name = @username OR customer_id = @username) AND password = @hashedPassword";
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@username", username);
                     cmd.Parameters.AddWithValue("@hashedPassword", hashedPassword);
 
-                    object result = cmd.ExecuteScalar();
-                    //int count = (int)cmd.ExecuteScalar();
+                    // Execute and retrieve the user ID using LINQ-like approach
+                    var result = cmd.ExecuteScalar() as int?;
 
-                    //if (count > 0)
-                    if(result != null)
+                    if (result.HasValue)
                     {
-                        int userId = Convert.ToInt32(result);
                         MessageBox.Show("Login successful!");
-                        UserProfile_Form userProfileForm = new UserProfile_Form(userId);
+                        UserProfile_Form userProfileForm = new UserProfile_Form(result.Value);
                         userProfileForm.Show();
                         this.Hide();
                     }
@@ -56,21 +55,14 @@ namespace CustomerInfo
                     }
                 }
             }
-
         }
+
         private string HashPassword(string password)
         {
             using (MD5 md5 = MD5.Create())
             {
-                byte[] inputBytes = Encoding.UTF8.GetBytes(password);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("x2"));
-                }
-                return sb.ToString();
+                byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return string.Concat(hashBytes.Select(b => b.ToString("x2")));
             }
         }
     }

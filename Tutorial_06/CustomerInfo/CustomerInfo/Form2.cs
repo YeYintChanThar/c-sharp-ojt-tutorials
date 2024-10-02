@@ -18,7 +18,10 @@ namespace CustomerInfo
         private const int maxCustomerNameLength = 15;
         private const int maxEmailLength = 100;
         private string hashedPassword;
-
+        static int custom_id;
+        int created_user_id;
+        int updated_user_id;
+        int deleted_user_id;
         public Registeration_Form()
         {
             InitializeComponent();
@@ -117,8 +120,8 @@ namespace CustomerInfo
         private void InsertCustomer(SqlConnection conn)
         {
             string memberID = GetNewMemberID(conn);
-            string query = @"INSERT INTO Customers (customer_id, customer_name, password, photo, nrc_number, dob, email, is_deleted, phone_no_1, phone_no_2, address, created_datetime, member_card, gender) 
-                             VALUES (@memberID, @name, @hashedPassword, @photo, @nrc, @dob, @Email, @isDeleted, @phone1, @phone2, @address, @created_datetime, @memberCard, @gender)";
+            string query = @"INSERT INTO Customers (customer_id, customer_name, password, photo, nrc_number, dob, email, is_deleted, phone_no_1, phone_no_2, address, created_datetime, member_card,created_user_id, updated_user_id, deleted_user_id, gender) 
+                             VALUES (@memberID, @name, @hashedPassword, @photo, @nrc, @dob, @Email, @isDeleted, @phone1, @phone2, @address, @created_datetime, @memberCard, @created_user_id, @updated_user_id, @deleted_user_id, @gender)";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -134,6 +137,7 @@ namespace CustomerInfo
         private string GetNewMemberID(SqlConnection conn)
         {
             int latestId = (int)new SqlCommand("SELECT ISNULL(MAX(CAST(SUBSTRING(customer_id, 3, LEN(customer_id) - 2) AS INT)), 0) FROM Customers", conn).ExecuteScalar();
+            created_user_id = latestId;
             return $"C-{(latestId + 1):D4}";
         }
 
@@ -151,6 +155,9 @@ namespace CustomerInfo
             cmd.Parameters.AddWithValue("@isDeleted", 0);
             cmd.Parameters.AddWithValue("@photo", string.IsNullOrEmpty(imagePath) ? (object)DBNull.Value : imagePath);
             cmd.Parameters.AddWithValue("@hashedPassword", hashedPassword);
+            cmd.Parameters.AddWithValue("@created_user_id", created_user_id);
+            cmd.Parameters.AddWithValue("@updated_user_id", 0);
+            cmd.Parameters.AddWithValue("@deleted_user_id", 0);
         }
 
         private void btnUpload_Click_1(object sender, EventArgs e)
