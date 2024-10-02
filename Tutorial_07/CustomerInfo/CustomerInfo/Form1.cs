@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace CustomerInfo
@@ -44,10 +42,9 @@ namespace CustomerInfo
                 {
                     conn.Open();
 
-                    // Base count query
+                  
                     string countQuery = "SELECT COUNT(*) FROM Customers WHERE is_deleted = 0";
 
-                    // Add filters for search item
                     if (!string.IsNullOrEmpty(searchItem))
                     {
                         countQuery += " AND (customer_name LIKE @searchItem OR customer_id LIKE @searchItem OR nrc_number LIKE @searchItem " +
@@ -56,7 +53,6 @@ namespace CustomerInfo
                                        "OR gender LIKE @searchItem OR id LIKE @searchItem)";
                     }
 
-                    // Add user ID filter if it exists
                     if (currentUserId.HasValue)
                     {
                         countQuery += " AND id = @userId";
@@ -117,7 +113,6 @@ namespace CustomerInfo
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
 
-                        // Check if any rows are returned
                         if (dt.Rows.Count == 0)
                         {
                             MessageBox.Show("No records found matching your search criteria.", "Search Result", MessageBoxButtons.OK, MessageBoxIcon.Information);

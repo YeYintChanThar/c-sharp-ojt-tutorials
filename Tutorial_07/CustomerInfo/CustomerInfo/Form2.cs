@@ -2,24 +2,24 @@
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+
 namespace CustomerInfo
 {
     public partial class Registeration_Form : Form
     {
         static int custom_id;
         private Image uploadedImage;
-        int created_user_id;
-        int updated_user_id;
-        int deleted_user_id;
         private string connectionString = "Data Source=DESKTOP-GKTPEC8\\SQLEXPRESSTESTER;Initial Catalog=CustomerDb;Integrated Security=True;";
         private string imagePath;
         private const int maxCustomerNameLength = 15;
         private const int maxEmailLength = 100;
         string hashedPassword;
+
         public Registeration_Form()
         {
             InitializeComponent();
@@ -30,24 +30,25 @@ namespace CustomerInfo
         {
             if (ValidateInputs())
             {
-                 hashedPassword = HashPassword(txtPwd.Text);
-
+                hashedPassword = HashPassword(txtPwd.Text);
             }
             else
             {
                 return;
             }
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 InsertCustomer(conn);
                 conn.Close();
             }
-            UserProfile_Form userProfileForm = new UserProfile_Form();
-            userProfileForm.Show(); 
-            this.Hide();
 
+            UserProfile_Form userProfileForm = new UserProfile_Form();
+            userProfileForm.Show();
+            this.Hide();
         }
+
         private string HashPassword(string password)
         {
             using (MD5 md5 = MD5.Create())
@@ -56,12 +57,7 @@ namespace CustomerInfo
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
 
                 // Convert hash bytes to hex string
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("x2"));
-                }
-                return sb.ToString();
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
             }
         }
 
@@ -74,92 +70,64 @@ namespace CustomerInfo
             string email = txtEmail.Text;
             string NRC = txtNRC.Text;
 
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(phone1) ||
-                string.IsNullOrWhiteSpace(phone2) || string.IsNullOrWhiteSpace(address))
+            var validationErrors = new[]
             {
-                MessageBox.Show("Please fill in all fields.");
-                return false;
-            }
+                string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(phone1) ||
+                string.IsNullOrWhiteSpace(phone2) || string.IsNullOrWhiteSpace(address) ? "Please fill in all fields." : null,
 
-            if (string.IsNullOrWhiteSpace(txtPwd.Text) || string.IsNullOrWhiteSpace(txtConfirmPwd.Text))
-            {
-                MessageBox.Show("Please fill in all fields.");
-                return false;
-            }
+                string.IsNullOrWhiteSpace(txtPwd.Text) || string.IsNullOrWhiteSpace(txtConfirmPwd.Text) ? "Please fill in all fields." : null,
 
-            if (txtPwd.Text != txtConfirmPwd.Text)
-            {
-                MessageBox.Show("Passwords do not match.");
-                return false;
-            }
-            if (name.Length > maxCustomerNameLength)
-            {
-                MessageBox.Show($"Customer name cannot exceed {maxCustomerNameLength} characters.");
-                return false;
-            }
+                txtPwd.Text != txtConfirmPwd.Text ? "Passwords do not match." : null,
 
-            if (email.Length > maxEmailLength)
+                name.Length > maxCustomerNameLength ? $"Customer name cannot exceed {maxCustomerNameLength} characters." : null,
+
+                email.Length > maxEmailLength ? $"Email cannot exceed {maxEmailLength} characters." : null,
+
+                !IsValidEmail(email) ? "Please enter a valid email address." : null,
+
+                !IsValidNRC(NRC) ? "Please enter a valid NRC." : null,
+
+                !IsValidPhone(phone1) || !IsValidPhone(phone2) ? "Please enter valid phone numbers." : null
+            }.Where(error => error != null).ToList();
+
+            if (validationErrors.Any())
             {
-                MessageBox.Show($"Email cannot exceed {maxEmailLength} characters.");
-                return false;
-            }
-            if (!IsValidEmail(email))
-            {
-                MessageBox.Show("Please enter a valid email address.");
-                return false;
-            }
-            if (!IsValidNRC(NRC))
-            {
-                MessageBox.Show("Please enter a valid NRC.");
-                return false;
-            }
-            if (!IsValidPhone(phone1) || !IsValidPhone(phone2))
-            {
-                MessageBox.Show("Please enter valid phone numbers.");
+                MessageBox.Show(string.Join(Environment.NewLine, validationErrors));
                 return false;
             }
 
             return true;
         }
 
-        private bool IsValidEmail(string email)
-        {
-            Regex regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-            return email != null && regex.IsMatch(email);
-        }
-        private bool IsValidNRC(string nrc)
-        {
-            Regex regex = new Regex(@"^(1[0-4]|[1-9])/[A-Za-z]+(\([A-Za-z]\))?\d{6}$");
-            return regex.IsMatch(nrc);
-        }
+        private bool IsValidEmail(string email) =>
+            new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").IsMatch(email);
 
-        private bool IsValidPhone(string phoneNo)
-        {
-            Regex regex = new Regex(@"^[\d()+-]+$");
-            return phoneNo != null && regex.IsMatch(phoneNo);
-        }
+        private bool IsValidNRC(string nrc) =>
+            new Regex(@"^(1[0-4]|[1-9])/[A-Za-z]+(\([A-Za-z]\))?\d{6}$").IsMatch(nrc);
 
+        private bool IsValidPhone(string phoneNo) =>
+            new Regex(@"^[\d()+-]+$").IsMatch(phoneNo);
 
         private void InsertCustomer(SqlConnection conn)
         {
+            string query = @"INSERT INTO Customers (customer_id, customer_name, password, photo, nrc_number, dob, email, is_deleted, phone_no_1, phone_no_2, address, created_user_id, updated_user_id, deleted_user_id, created_datetime, member_card, gender) 
+                             VALUES (@memberID, @name, @hashedPassword, @photo, @nrc, @dob, @Email, @isDeleted, @phone1, @phone2, @address, @created_user_id, @updated_user_id, @deleted_user_id, @created_datetime, @memberCard, @gender)";
+
             int latestId = (int)new SqlCommand("SELECT ISNULL(MAX(CAST(SUBSTRING(customer_id, 3, LEN(customer_id) - 2) AS INT)), 0) FROM Customers", conn).ExecuteScalar();
             string memberID = $"C-{(latestId + 1):D4}";
-            created_user_id = latestId;
-            string query = @"INSERT INTO Customers (customer_id, customer_name,password, photo, nrc_number, dob, email, is_deleted, phone_no_1, phone_no_2, address, created_user_id, updated_user_id, deleted_user_id, created_datetime, member_card, gender) 
-                     VALUES (@memberID, @name,@hashedPassword, @photo, @nrc, @dob, @Email, @isDeleted, @phone1, @phone2, @address, @created_user_id, @updated_user_id, @deleted_user_id, @created_datetime, @memberCard, @gender)";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 cmd.Parameters.AddWithValue("@created_datetime", DateTime.Now);
                 cmd.Parameters.AddWithValue("@memberID", memberID);
                 AddCustomerParameters(cmd);
-
                 cmd.ExecuteNonQuery();
             }
+
             MessageBox.Show("New customer added successfully.");
         }
 
-        private void AddCustomerParameters(SqlCommand cmd, int? id = null)
+        private void AddCustomerParameters(SqlCommand cmd)
         {
             string name = txtCustomName.Text;
             string NRC = txtNRC.Text;
@@ -171,12 +139,6 @@ namespace CustomerInfo
             string address = txtAddress.Text;
             int memberCard = cboMemberCard.SelectedIndex == 0 ? 1 : 2;
             int gender = rdoMale.Checked ? 1 : rdoFemale.Checked ? 2 : 0;
-
-            if (id.HasValue)
-            {
-                cmd.Parameters.AddWithValue("@id", id.Value);
-                cmd.Parameters.AddWithValue("@updated_datetime", DateTime.Now);
-            }
 
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@nrc", NRC);
@@ -197,7 +159,6 @@ namespace CustomerInfo
 
         private void btnUpload_Click_1(object sender, EventArgs e)
         {
-            //MessageBox.Show("Upload button clicked!");
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
@@ -210,35 +171,29 @@ namespace CustomerInfo
                 }
             }
         }
-        private void dtpDOB_ValueChanged(object sender, EventArgs e)
-        {
-            CalculateAge();
-        }
+
+        private void dtpDOB_ValueChanged(object sender, EventArgs e) => CalculateAge();
 
         private int CalculateAge()
         {
             DateTime dob = dtpDOB.Value;
-            int currentYear = DateTime.Now.Year;
-
-            int birthYear = dob.Year;
-            int age = currentYear - birthYear;
-
-            if (dob > DateTime.Now.AddYears(-age)) age--;
             if (dob > DateTime.Now)
             {
                 MessageBox.Show("Date of Birth cannot be in the future.");
                 return 0;
             }
 
+            int age = DateTime.Now.Year - dob.Year;
+            if (dob > DateTime.Now.AddYears(-age)) age--;
+
             if (age < 0)
             {
                 MessageBox.Show("Calculated age is negative. Please check the date of birth.");
                 return 0;
             }
+
             txtAge.Text = age.ToString();
             return age;
         }
-
-      
     }
 }
