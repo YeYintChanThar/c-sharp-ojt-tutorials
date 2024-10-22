@@ -12,7 +12,7 @@ namespace CustomerInfo
     {
         private string connectionString = "Data Source=DESKTOP-GKTPEC8\\SQLEXPRESSTESTER;Initial Catalog=CustomerDb;Integrated Security=True;";
         private int customerId;
-        private long id { get; set; }
+        private long id;
         private Image uploadedImage;
         private string imagePath;
         private int userId;
